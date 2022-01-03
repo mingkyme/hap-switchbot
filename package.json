@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.24.0",
-    "hap-nodejs": "^0.9.8"
+    "hap-nodejs": "^0.9.8",
+    "mqtt": "^4.3.2"
   }
 }

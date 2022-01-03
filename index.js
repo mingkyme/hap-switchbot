@@ -1,6 +1,16 @@
 const hap = require("hap-nodejs");
 const axios = require('axios').default;
 const switchbotOption = require('./secret/switchbot.json');
+const mqtt = require('mqtt');
+const mqttOption = require('./secret/mqtt.json');
+const client  = mqtt.connect(mqttOption.host,mqttOption);
+
+var state = false;
+client.on("connect", () => { });
+client.subscribe(`iot/switchbot/${switchbotOption.botId}/state`);
+client.on('message',(topic,payload,packet) =>{
+  state = !JSON.parse(payload).state;
+});
 
 const Accessory = hap.Accessory;
 const Characteristic = hap.Characteristic;
@@ -14,14 +24,15 @@ const switchService = new Service.Switch("Room Switchbot");
 
 const onCharacteristic = switchService.getCharacteristic(Characteristic.On);
 
-currentSwitchState = false;
+
 // with the 'on' function we can add event handlers for different events, mainly the 'get' and 'set' event
 onCharacteristic.on(CharacteristicEventTypes.GET, callback => {
-  callback(undefined, currentSwitchState);
+  callback(undefined, state);
 });
 onCharacteristic.on(CharacteristicEventTypes.SET, (value, callback) => {
-  axios.get(`https://auto.mingky.me/switchbot/${switchbotOption.botId}/${value?"ON":"OFF"}`);
-  currentSwitchState = value;
+  client.publish(`iot/switchbot/${switchbotOption.botId}`,value?"ON":"OFF");
+  // let date = new Date();
+  axios.post('https://discord.com/api/webhooks/927533858088443984/CwcWxyV4reHQUsK4UBRbx1ET0xUt4L1ZV3kyfcOiiyCxZ561CSmCuI5yA555Uyro2dQv',{"content":`${Date().toISOString().replace('T', ' ').substring(0, 19)} ${value?"ON":"OFF"}`});
   callback();
 });
 
