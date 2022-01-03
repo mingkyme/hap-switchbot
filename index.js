@@ -1,6 +1,7 @@
 const hap = require("hap-nodejs");
 const axios = require('axios').default;
 const switchbotOption = require('./secret/switchbot.json');
+const discordOption = require('./secret/discord.json');
 const mqtt = require('mqtt');
 const mqttOption = require('./secret/mqtt.json');
 const client  = mqtt.connect(mqttOption.host,mqttOption);
@@ -32,7 +33,7 @@ onCharacteristic.on(CharacteristicEventTypes.GET, callback => {
 onCharacteristic.on(CharacteristicEventTypes.SET, (value, callback) => {
   client.publish(`iot/switchbot/${switchbotOption.botId}`,value?"ON":"OFF");
   // let date = new Date();
-  axios.post('https://discord.com/api/webhooks/927533858088443984/CwcWxyV4reHQUsK4UBRbx1ET0xUt4L1ZV3kyfcOiiyCxZ561CSmCuI5yA555Uyro2dQv',{"content":`${Date().toISOString().replace('T', ' ').substring(0, 19)} ${value?"ON":"OFF"}`});
+  axios.post(discordOption.url,{"content":`${Date().toISOString().replace('T', ' ').substring(0, 19)} ${value?"ON":"OFF"}`});
   callback();
 });
 
