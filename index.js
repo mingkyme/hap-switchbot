@@ -33,7 +33,7 @@ onCharacteristic.on(CharacteristicEventTypes.GET, callback => {
 onCharacteristic.on(CharacteristicEventTypes.SET, (value, callback) => {
   client.publish(`iot/switchbot/${switchbotOption.botId}`,value?"ON":"OFF");
   // let date = new Date();
-  axios.post(discordOption.url,{"content":`${Date().toISOString().replace('T', ' ').substring(0, 19)} ${value?"ON":"OFF"}`});
+  axios.post(discordOption.url,{"content":`${new Date().toISOString().replace('T', ' ').substring(0, 19)} ${value?"ON":"OFF"}`});
   callback();
 });
 
