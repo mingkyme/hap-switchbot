@@ -28,12 +28,13 @@ const onCharacteristic = switchService.getCharacteristic(Characteristic.On);
 
 // with the 'on' function we can add event handlers for different events, mainly the 'get' and 'set' event
 onCharacteristic.on(CharacteristicEventTypes.GET, callback => {
+  console.log("GET ", state);
   callback(undefined, state);
 });
 onCharacteristic.on(CharacteristicEventTypes.SET, (value, callback) => {
   client.publish(`iot/switchbot/${switchbotOption.botId}`,value?"ON":"OFF");
-  // let date = new Date();
   axios.post(discordOption.url,{"content":`${new Date().toISOString().replace('T', ' ').substring(0, 19)} ${value?"ON":"OFF"}`});
+  state = value;
   callback();
 });
 
